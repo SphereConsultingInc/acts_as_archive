@@ -225,5 +225,10 @@ end
 ::ActiveRecord::Base.send(:include, ::ActsAsArchive::Base)
 ::ActiveRecord::ConnectionAdapters::DatabaseStatements.send(:include, ::ActsAsArchive::DatabaseStatements)
 
-require "acts_as_archive/adapters/rails#{Rails.version[0..0]}" if defined?(Rails)
+# DISABLE: Trying to evaluate the model name (e.g. Article) in the load_from_yaml method during rails initialization 
+# The problem is you might have e.g. some acts_as* statements in the affected model that hasn't been met yet. 
+# E.g. you utilize an acts_as_train plugin in the model but the plugin hasn't been loaded
+# so in the "klass = eval(klass) rescue nil" statement you get an undefined method 'acts_as_train' error which results in nil.
+#
+# require "acts_as_archive/adapters/rails#{Rails.version[0..0]}" if defined?(Rails)
 require "acts_as_archive/adapters/sinatra" if defined?(Sinatra)
